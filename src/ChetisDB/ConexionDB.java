@@ -1,4 +1,4 @@
-package ChatisDB;
+package ChetisDB;
 
 import Clases.Respuesta;
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import java.util.Vector;
  */
 public class ConexionDB {
 
-    protected Connection con;
+    private Connection con;
     private Respuesta respuesta;
 
     public ConexionDB() {
@@ -46,8 +46,8 @@ public class ConexionDB {
 
             }
         } catch (SQLException ex) {
-            System.out.println(ex);
-
+            System.out.println("-> Excepcion de tipo "+ex);
+            System.out.println("-> ¿Sí tienes mysql corriendo, maldito incompetente?");
         }
 
     }

@@ -5,7 +5,7 @@
  */
 package Clases;
 
-import ChatisDB.ConexionDB;
+import ChetisDB.ConexionDB;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

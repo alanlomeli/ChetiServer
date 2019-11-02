@@ -1,4 +1,4 @@
-import ChatisDB.ConexionDB;
+import ChetisDB.ConexionDB;
 import Clases.BuscarPeticiones;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -16,12 +16,12 @@ public class Main {
         ConexionDB bd = new ConexionDB();
         // bd.mostrar();
 
-        System.out.println("_________ .__            __  .__  _________                                \n" +
-                "\\_   ___ \\|  |__ _____ _/  |_|__|/   _____/ ______________  __ ___________ \n" +
-                "/    \\  \\/|  |  \\\\__  \\\\   __\\  |\\_____  \\_/ __ \\_  __ \\  \\/ // __ \\_  __ \\\n" +
-                "\\     \\___|   Y  \\/ __ \\|  | |  |/        \\  ___/|  | \\/\\   /\\  ___/|  | \\/\n" +
-                " \\______  /___|  (____  /__| |__/_______  /\\___  >__|    \\_/  \\___  >__|   \n" +
-                "        \\/     \\/     \\/                \\/     \\/                 \\/       ");
+        System.out.println("_________ .__            __  .__  _________                                       \n" +
+                "\\_   ___ \\|  |__   _____/  |_|__|/   _____/ _____________________  __ ___________ \n" +
+                "/    \\  \\/|  |  \\_/ __ \\   __\\  |\\_____  \\_/ __ \\_  __ \\_  __ \\  \\/ // __ \\_  __ \\\n" +
+                "\\     \\___|   Y  \\  ___/|  | |  |/        \\  ___/|  | \\/|  | \\/\\   /\\  ___/|  | \\/\n" +
+                " \\______  /___|  /\\___  >__| |__/_______  /\\___  >__|   |__|    \\_/  \\___  >__|   \n" +
+                "        \\/     \\/     \\/                \\/     \\/                        \\/       ");
         System.out.println("-> Server started");
         Thread h1 = new Thread();
         h1 = new BuscarPeticiones(1);
