@@ -19,7 +19,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-        ConexionDB bd = new ConexionDB();
 
         System.out.println("_________ .__            __  .__  _________                                       \n" +
                 "\\_   ___ \\|  |__   _____/  |_|__|/   _____/ _____________________  __ ___________ \n" +
@@ -29,7 +28,8 @@ public class Main {
                 "        \\/     \\/     \\/                \\/     \\/                        \\/       ");
         System.out.println("-> Server started");
 
-
+        ConexionDB bd = new ConexionDB();
+        System.out.println("-> Base de datos iniciada");
         HashMap<Long,Usuarios> usuarios= new HashMap<>();
         Vector <String> rawUsuarios;
         rawUsuarios=bd.obtenerUsuariosSistema();

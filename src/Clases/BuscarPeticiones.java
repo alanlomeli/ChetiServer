@@ -96,7 +96,6 @@ public class BuscarPeticiones extends Thread {
                             listaCompitasHash.get(usuarios.get(celular).getCelular()).setApodo(apodo);
 
                         }
-
                         for (long key : usuarios.keySet()) {
 
                             if (!listaCompitasHash.containsKey(key)) {
