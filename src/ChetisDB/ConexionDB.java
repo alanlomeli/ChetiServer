@@ -1,6 +1,9 @@
 package ChetisDB;
 
 import Clases.Respuesta;
+import Clases.Usuarios;
+import com.google.gson.Gson;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,12 +12,11 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 /**
- *
  * @author alan
  */
 public class ConexionDB {
 
-    private Connection con;
+    protected Connection con;
     private Respuesta respuesta;
 
     public ConexionDB() {
@@ -24,12 +26,15 @@ public class ConexionDB {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost/ChatisDB", "root", "");
         } catch (ClassNotFoundException | SQLException ex) {
-            System.out.println(ex);
+            System.out.println("-> Excepcion de tipo " + ex);
+            System.out.println("-> ¿Sí tienes mysql corriendo, maldito incompetente?");
         }
 
     }
 
-    public void mostrar() {
+    public Vector<String> obtenerUsuariosSistema() {
+        Vector<String> respuesta = new Vector<>();
+        Gson gson = new Gson();
 
         try {
             ResultSet rs;
@@ -38,21 +43,20 @@ public class ConexionDB {
             rs = sql.executeQuery();
 
             while (rs.next()) {
-                System.out.println("CELULAR: " + rs.getInt("Celular"));
-
-                System.out.println("Nombre: " + rs.getString("Nombre"));
-                System.out.println("Apellido: " + rs.getString("Apellido"));
-                System.out.println("Respuesta: " + rs.getString("Respuesta"));
-
+                Usuarios persona = new Usuarios();
+                persona.setCelular(rs.getLong("Celular"));
+                persona.setNombre(rs.getString("Nombre"));
+                persona.setApellido(rs.getString("Apellido"));
+                persona.setOnline(false);
+                respuesta.add(gson.toJson(persona));
             }
         } catch (SQLException ex) {
-            System.out.println("-> Excepcion de tipo "+ex);
-            System.out.println("-> ¿Sí tienes mysql corriendo, maldito incompetente?");
+            System.out.println(ex);
         }
-
+        return respuesta;
     }
 
-    public Respuesta iniciarSesion(int celular, String passwd) {
+    public Respuesta iniciarSesion(long celular, String passwd) {
         respuesta = new Respuesta();
         try {
             ResultSet rs;
@@ -63,6 +67,7 @@ public class ConexionDB {
             if (!rs.next()) {           //Si no hay filas
                 respuesta.setSuccess(false);
             } else {
+
                 do {
                     Vector datos = new Vector();
                     datos.add(rs.getString("Celular"));
@@ -83,16 +88,15 @@ public class ConexionDB {
         return respuesta;
     }
 
-    public Respuesta cambiarNombre(int celular, String nombre, String apellido) {
+    public Respuesta cambiarNombre(long celular, String nombre, String apellido) {
         respuesta = new Respuesta();
         try {
             String consulta = "update Usuario set Nombre=?, Apellido=? where Celular=?";
 
             PreparedStatement sql = con.prepareStatement(consulta);
-            sql.setInt(3, celular);
+            sql.setLong(3, celular);
             sql.setString(1, nombre);
             sql.setString(2, apellido);
-            System.out.println(sql);
             sql.executeUpdate();
             respuesta.setSuccess(true);
 
@@ -104,7 +108,7 @@ public class ConexionDB {
         return respuesta;
     }
 
-    public Respuesta enviarMsgUsuario(int transmisor, int receptor, String msg) {
+    public Respuesta enviarMsgUsuario(long transmisor, long receptor, String msg) {
         respuesta = new Respuesta();
         try {
 
@@ -115,7 +119,7 @@ public class ConexionDB {
         return respuesta;
     }
 
-    public Respuesta enviarMsgGrupo(int transmisor, int idGrupo, String msg) {
+    public Respuesta enviarMsgGrupo(long transmisor, long idGrupo, String msg) {
         respuesta = new Respuesta();
         try {
 
@@ -126,7 +130,7 @@ public class ConexionDB {
         return respuesta;
     }
 
-    public Respuesta compitasConectados(int celular) {
+    public Respuesta compitasConectados(long celular) {
         respuesta = new Respuesta();
         ResultSet rs;
         Vector datos = new Vector();
@@ -143,17 +147,15 @@ public class ConexionDB {
                     + "WHERE\n"
                     + "Amistad.Persona_FK = ?";
             PreparedStatement sql = con.prepareStatement(consulta);
-            sql.setInt(1, celular);
-            System.out.println(sql);
+            sql.setLong(1, celular);
             rs = sql.executeQuery();
             while (rs.next()) {
                 miniJson += rs.getString("nombreCompi") + ",";
                 miniJson += rs.getString("apodoCompi") + ",";
                 miniJson += rs.getString("celularCompi");
                 datos.add(miniJson);
-                System.out.println("Compi añadido!" + rs.getString("nombreCompi"));
             }
-            
+
             respuesta.setDatos(datos);
             respuesta.setSuccess(true);
         } catch (Exception ex) {
@@ -163,36 +165,71 @@ public class ConexionDB {
 
         return respuesta;
     }
-    
-    public Respuesta registro(int Celular, String Nombre, String Apellido, String Passwd, String Respuesta){
-        respuesta=new Respuesta();
-        try{
-            ResultSet res;        
-            PreparedStatement sql=con.prepareStatement("SELECT Celular FROM usuario where Celular = ?");
-            sql.setInt(1, Celular);
-            res=sql.executeQuery();
-            
-             if (res.next()) {       //Si existe la fila    
+
+    public Vector<String> obtenerCompitas(long celular) {
+        respuesta = new Respuesta();
+        ResultSet rs;
+        Vector <String>datos = new Vector();
+        try {
+            String consulta = "SELECT\n"
+                    + "Amistad.Apodo AS apodoCompi,\n"
+                    + "Amistad.Amigo_FK AS celular\n"
+                    + "FROM\n"
+                    + "Usuario\n"
+                    + "INNER JOIN Amistad ON Amistad.Amigo_FK = Usuario.Celular\n"
+                    + "WHERE\n"
+                    + "Amistad.Persona_FK = ?";
+            PreparedStatement sql = con.prepareStatement(consulta);
+            sql.setLong(1, celular);
+            rs = sql.executeQuery();
+
+            while (rs.next()) {
+                    datos.add(rs.getString("celular")+","+rs.getString("apodoCompi"));
+            }
+
+
+        } catch (Exception ex) {
+            System.out.println(" -> " + ex);
+            return datos;
+        }
+
+        return datos;
+    }
+
+
+    public Respuesta registro(long Celular, String Nombre, String Apellido, String Passwd, String Respuesta) {
+        respuesta = new Respuesta();
+        try {
+            ResultSet res;
+            PreparedStatement sql = con.prepareStatement("SELECT Celular FROM Usuario where Celular = ?");
+            sql.setLong(1, Celular);
+            res = sql.executeQuery();
+
+            if (res.next()) {       //Si existe la fila
                 respuesta.setSuccess(false);
             } else {
                 do {
-                    sql=con.prepareStatement("insert into usuario values(?,?,?,? , AES_ENCRYPT(?,\"chetis\"))");
-               
-                    sql.setInt(1, Celular);
+                    sql = con.prepareStatement("insert into Usuario values(?,?,?,? , AES_ENCRYPT(?,\"chetis\"))");
+
+                    sql.setLong(1, Celular);
                     sql.setString(2, Nombre);
                     sql.setString(3, Apellido);
                     sql.setString(5, Passwd);
                     sql.setString(4, Respuesta);
-                    System.out.println(sql);
                     sql.executeUpdate();
-                    
+                    Vector<String> datos = new Vector<>();
+                    datos.add(Celular + "");
+                    datos.add(Nombre);
+                    datos.add(Apellido);
+                    datos.add(Passwd);
+                    respuesta.setDatos(datos);
                     respuesta.setSuccess(true);
                     return respuesta;
                 } while (!res.next());
             }
-            
-        }catch(SQLException ex){
-            System.out.println(" -> "+ex);
+
+        } catch (SQLException ex) {
+            System.out.println(" -> " + ex);
             return respuesta;
         }
         return respuesta;

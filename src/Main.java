@@ -1,5 +1,8 @@
 import ChetisDB.ConexionDB;
 import Clases.BuscarPeticiones;
+import Clases.Usuarios;
+import com.google.gson.Gson;
+
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -8,13 +11,15 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Vector;
 
 public class Main {
+
 
     public static void main(String[] args) {
 
         ConexionDB bd = new ConexionDB();
-        // bd.mostrar();
 
         System.out.println("_________ .__            __  .__  _________                                       \n" +
                 "\\_   ___ \\|  |__   _____/  |_|__|/   _____/ _____________________  __ ___________ \n" +
@@ -23,8 +28,21 @@ public class Main {
                 " \\______  /___|  /\\___  >__| |__/_______  /\\___  >__|   |__|    \\_/  \\___  >__|   \n" +
                 "        \\/     \\/     \\/                \\/     \\/                        \\/       ");
         System.out.println("-> Server started");
-        Thread h1 = new Thread();
-        h1 = new BuscarPeticiones(1);
+
+
+        HashMap<Long,Usuarios> usuarios= new HashMap<>();
+        Vector <String> rawUsuarios;
+        rawUsuarios=bd.obtenerUsuariosSistema();
+        Gson gson=new Gson();
+
+      for (int i=0; i<rawUsuarios.size();i++){
+            Usuarios persona=gson.fromJson(rawUsuarios.get(i), Usuarios.class);
+           usuarios.put(persona.getCelular(),persona);
+
+       }
+
+        Thread h1;
+        h1 = new BuscarPeticiones(usuarios);
         h1.start();
         System.out.println("-> Threads iniciados");
 
