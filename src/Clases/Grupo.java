@@ -8,6 +8,22 @@ public class Grupo {
     long creador;
     Vector<Long> miembros;
 
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
     public Grupo() {
 
     }

@@ -1,5 +1,6 @@
 package ChetisDB;
 
+import Clases.Grupo;
 import Clases.Respuesta;
 import Clases.Usuarios;
 import com.google.gson.Gson;
@@ -9,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -249,8 +251,10 @@ public class ConexionDB {
             sql.setLong(2, creador);
             sql.setString(1, nombre_grupo);
             sql.executeUpdate();
-            ResultSet rs;
 
+
+
+            ResultSet rs;
             consulta = "SELECT LAST_INSERT_ID() as ID";
             sql = con.prepareStatement(consulta);
             rs = sql.executeQuery();
@@ -258,6 +262,12 @@ public class ConexionDB {
             while (rs.next()) {
                 id_insertado = rs.getInt("ID");
             }
+
+            consulta = "INSERT INTO Integrantes_Grupo (Grupo_FK,Usuario_FK)VALUES(?,?)";
+            sql = con.prepareStatement(consulta);
+            sql.setLong(2, creador);
+            sql.setInt(1, id_insertado);
+            sql.executeUpdate();
 
             enviarSolicitudesGrupo(datos, id_insertado);
             respuesta.setSuccess(true);
@@ -282,7 +292,8 @@ public class ConexionDB {
                 sql.executeUpdate();
 
             }
-
+            Vector<String> datoss = new Vector<>();
+            datoss.add("777");
             respuesta.setSuccess(true);
 
         } catch (SQLException ex) {
@@ -290,34 +301,66 @@ public class ConexionDB {
         }
 
     }
-    private void obtenerGrupos(Vector<String> datos) {
-            Vector<String> gruposEncontrados= new Vector<>();
+
+    public HashMap<Integer, Grupo> generarListaGrupos(String celular) {
+        Gson gson = new Gson();
+
+        Vector<String> gruposEncontrados = new Vector<>();
+        HashMap<Integer, Grupo> grupos = new HashMap<>();
+
         try {
 
-            long celular=Long.parseLong(datos.get(0));
-
-            String consulta = "SELECT DISTINCT" +
+            String consulta = "SELECT DISTINCT " +
                     "Integrantes_Grupo.Grupo_FK," +
                     "Grupo.Nombre," +
-                    "Grupo.Creador_FK" +
-                    "FROM" +
-                    "Integrantes_Grupo" +
-                    "INNER JOIN Grupo ON Integrantes_Grupo.Grupo_FK = Grupo.Grupo_ID" +
-                    "WHERE" +
+                    "Grupo.Creador_FK " +
+                    "FROM " +
+                    "Integrantes_Grupo " +
+                    "INNER JOIN Grupo ON Integrantes_Grupo.Grupo_FK = Grupo.Grupo_ID " +
+                    "WHERE " +
                     "Integrantes_Grupo.Usuario_FK=?";
 
             PreparedStatement sql = con.prepareStatement(consulta);
+            sql.setLong(1, Long.parseLong(celular));
+
             ResultSet rs;
             rs = sql.executeQuery();
 
             while (rs.next()) {
-                gruposEncontrados.add( rs.getInt("Grupo_FK")+","+rs.getString("Nombre")+rs.getLong("Creador_FK"));
+                gruposEncontrados.add(rs.getInt("Grupo_FK") + "," + rs.getString("Nombre") + "," + rs.getLong("Creador_FK"));
             }
 
+            for (int i = 0; i < gruposEncontrados.size(); i++) {
+                Vector<Long> miembros = new Vector<>();
+                Grupo grupo = new Grupo();
+                String[] parts = gruposEncontrados.get(i).split(",");
+                grupo.setCreador(Long.parseLong(parts[2]));
+                grupo.setNombre(parts[1]);
+                grupo.setID(Integer.parseInt(parts[0]));
+
+                consulta = "SELECT " +
+                        "Integrantes_Grupo.Usuario_FK " +
+                        "FROM " +
+                        "Integrantes_Grupo " +
+                        "WHERE Integrantes_Grupo.Grupo_FK=?";
+
+                sql = con.prepareStatement(consulta);
+                sql.setInt(1, Integer.parseInt(parts[0]));
+                rs = sql.executeQuery();
+
+                while (rs.next()) {
+                    miembros.add(rs.getLong("Usuario_FK"));
+                }
+                grupo.setMiembros(miembros);
+                grupos.put(Integer.parseInt(parts[0]), grupo);
+
+            }
 
         } catch (SQLException ex) {
             System.out.println(" -> " + ex);
         }
+        //System.out.println(gson.toJson(grupos));
+        return grupos;
     }
 
 }

@@ -86,6 +86,7 @@ public class BuscarPeticiones extends Thread {
                         Vector<String> listaCompitas;
                         HashMap<Long, Usuarios> listaCompitasHash = new HashMap<>();
                         HashMap<Long, Usuarios> listaUsuariosHash = new HashMap<>();
+                        HashMap<Integer, Grupo> listaGrupoHash = new HashMap<>();
 
                         listaCompitas = db.obtenerCompitas(Long.parseLong(comunicacion.datos.get(0)));
                         for (int i = 0; i < listaCompitas.size(); i++) {
@@ -102,8 +103,8 @@ public class BuscarPeticiones extends Thread {
                                 listaUsuariosHash.put(key,usuarios.get(key));
                             }
                         }
-
-                        ListaUsuarios lista = new ListaUsuarios(listaCompitasHash,listaUsuariosHash);
+                        listaGrupoHash= db.generarListaGrupos(comunicacion.datos.get(0));
+                        ListaUsuarios lista = new ListaUsuarios(listaCompitasHash,listaUsuariosHash,listaGrupoHash);
                         Vector <String> datos= new Vector<>();
                         datos.add(gson.toJson(lista));
                         responder= new Respuesta();
