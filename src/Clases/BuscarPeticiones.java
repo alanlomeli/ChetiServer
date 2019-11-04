@@ -117,6 +117,10 @@ public class BuscarPeticiones extends Thread {
                         System.out.print("-> Ver compitas conectados de  ");
                         break;
 
+                    case "crearGrupo":
+                        responder = db.crearGrupo(comunicacion.datos);
+                        System.out.print("-> Se ha detectado creacion de grupo  ");
+                        break;
                 }
                 System.out.print(c.getRemoteSocketAddress().toString());
                 System.out.println(" respuesta: " + gson.toJson(responder));

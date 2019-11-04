@@ -1,11 +1,11 @@
 package Clases;
 
 import java.util.HashMap;
-import java.util.Vector;
 
 public class ListaUsuarios {
     private HashMap<Long,Usuarios> compitas;
     private HashMap<Long,Usuarios> personas;
+    private HashMap<Long,Grupo> grupos;
 
     public ListaUsuarios(HashMap<Long, Usuarios> compitas, HashMap<Long, Usuarios> personas) {
         this.compitas = compitas;
