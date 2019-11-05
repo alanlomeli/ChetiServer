@@ -93,7 +93,9 @@ public class BuscarPeticiones extends Thread {
                             String respuestaMsgJson;
                             String ip=lista.getPersonas().get(Long.parseLong(comunicacion.datos.get(1))).getIp();
                             ip=ip.substring(1);
-                            ip=ip.substring(0,ip.length()-5);
+                            String[] recorte;
+                            recorte = ip.split(":");
+                            ip = recorte[0];
                             System.out.println(ip);
                             Socket socketMsg = new Socket(ip, 1234);
                             BufferedReader brMsg = new BufferedReader(new InputStreamReader(socketMsg.getInputStream()));
