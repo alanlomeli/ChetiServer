@@ -51,6 +51,8 @@ public class BuscarPeticiones extends Thread {
                     case "login":
                         responder = db.iniciarSesion(Long.parseLong(comunicacion.datos.get(0)), comunicacion.datos.get(1));
                         if (responder.success) {
+
+
                             usuarios.get(Long.parseLong(comunicacion.datos.get(0))).setOnline(true);
                             usuarios.get(Long.parseLong(comunicacion.datos.get(0))).setIp(c.getRemoteSocketAddress().toString());
 
@@ -80,7 +82,36 @@ public class BuscarPeticiones extends Thread {
                         }
                         System.out.print("-> Registro detectado de ");
                         break;
-
+                    case "MsgUsuario":
+                        try {
+                            System.out.println("-> Se ha detectado un mensaje");
+                            Gson gsonMsg = new Gson();
+                            String respuestaMsgJson;
+                            Socket socketMsg = new Socket(comunicacion.datos.get(1), 1234);
+                            BufferedReader brMsg = new BufferedReader(new InputStreamReader(socketMsg.getInputStream()));
+                            BufferedWriter bwMsg = new BufferedWriter(new OutputStreamWriter(socketMsg.getOutputStream()));
+                            Vector<String> vectorMsg = new Vector<>(2, 2);
+                            vectorMsg.addElement(comunicacion.datos.get(0));//quien envia el msg
+                            vectorMsg.addElement(comunicacion.datos.get(2));//msj a enviar
+                            bwMsg.write(gsonMsg.toJson(new Comunicacion("msg", vectorMsg)) + "\n");
+                            bwMsg.flush();
+                            respuestaMsgJson = brMsg.readLine();
+                            socketMsg.close();
+                            brMsg.close();
+                            bwMsg.close();
+                            gsonMsg = new Gson();
+                            Respuesta respuestaMsg = gsonMsg.fromJson(respuestaMsgJson, Respuesta.class);
+                            if (respuestaMsg.success()==true){
+                                System.out.println("-> Se ha enviado el Msg correctamente! (:");
+                                responder.setSuccess(true);
+                            }else{
+                                System.out.println("-> No se envío el msg MAldito Incompetente!! >:v");
+                                responder.setSuccess(false);
+                            }
+                        }catch (Exception ex){
+                            System.out.println(ex);
+                        }
+                        break;
                     case "verUsuarios":
 
                         Vector<String> listaCompitas;
@@ -110,7 +141,7 @@ public class BuscarPeticiones extends Thread {
                         responder= new Respuesta();
                         responder.setSuccess(true);
                         responder.setDatos(datos);
-                        System.out.println(" -> Se ha solicita la lista de usuarios");
+                        System.out.println(" -> Se ha solicitado la lista de usuarios");
                         break;
 
                     case "compitasConectados":
@@ -122,6 +153,8 @@ public class BuscarPeticiones extends Thread {
                         responder = db.crearGrupo(comunicacion.datos);
                         System.out.print("-> Se ha detectado creacion de grupo  ");
                         break;
+
+
                 }
                 System.out.print(c.getRemoteSocketAddress().toString());
                 System.out.println(" respuesta: " + gson.toJson(responder));
