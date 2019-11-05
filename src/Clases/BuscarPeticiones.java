@@ -75,6 +75,13 @@ public class BuscarPeticiones extends Thread {
                         }
                         break;
 
+                    case "cambiarContra":
+                        System.out.println(comunicacion.datos.get(0));
+                        System.out.println(comunicacion.datos.get(1));
+                        responder = db.cambiarContra(Long.parseLong(comunicacion.datos.get(0)), comunicacion.datos.get(1));
+                        System.out.print("-> Cambio de contra dectectado de ");
+                        break;
+
                     case "registro":
                         // Celular,  Nombre,  Apellido,  Passwd,  Respuesta
                         responder = db.registro(Long.parseLong(comunicacion.datos.get(0)), comunicacion.datos.get(1),
@@ -169,6 +176,11 @@ public class BuscarPeticiones extends Thread {
                     case "crearGrupo":
                         responder = db.crearGrupo(comunicacion.datos);
                         System.out.print("-> Se ha detectado creacion de grupo  ");
+                        break;
+
+                    case "recuperarCuenta" :
+                        responder = db.olvidePassword(Long.parseLong(comunicacion.datos.get(0)), comunicacion.datos.get(1));
+                        System.out.println("-> Se ha solicitado una recuperación de contraseña ");
                         break;
                     case "actualizarGrupo":
                         responder = db.actualizarGrupo(comunicacion.datos);

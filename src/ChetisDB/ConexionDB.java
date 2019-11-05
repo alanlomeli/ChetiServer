@@ -31,7 +31,6 @@ public class ConexionDB {
             System.out.println("-> Excepcion de tipo " + ex);
             System.out.println("-> ¿Sí tienes mysql corriendo, maldito incompetente?");
         }
-
     }
 
     public Vector<String> obtenerUsuariosSistema() {
@@ -90,6 +89,50 @@ public class ConexionDB {
         return respuesta;
     }
 
+    public Respuesta olvidePassword(long celular, String dondeVivio) {
+        respuesta = new Respuesta();
+        try {
+
+                PreparedStatement sql = con.prepareStatement("select AES_DECRYPT(passwd,\"chetis\") as passwd from usuario where celular=? && respuesta=?");
+                sql.setLong(1, celular);
+                sql.setString(2, dondeVivio);
+                ResultSet rs = sql.executeQuery();
+            System.out.println(sql);
+                while(rs.next()) {
+                    Vector<String> datos = new Vector<>();
+                    datos.add(rs.getString("passwd"));
+                    System.out.println(rs.getString("passwd"));
+                    respuesta.setDatos(datos);
+                    respuesta.setSuccess(true);
+                    return respuesta;
+
+                }
+        }
+        catch (SQLException ex) {
+            System.out.println(" -> " + ex);
+        }
+        return respuesta;
+    }
+
+    public Respuesta cambiarContra(long celular, String password) {
+        respuesta=new Respuesta();
+        try {
+            String consulta = "update Usuario set passwd=AES_ENCRYPT(?,\"chetis\") where Celular=?";
+            PreparedStatement sql = con.prepareStatement(consulta);
+            sql.setLong(2, celular);
+            sql.setString(1, password);
+            sql.executeUpdate();
+
+            respuesta.setSuccess(true);
+
+        }catch (SQLException ex) {
+            System.out.println(" -> " + ex);
+            return respuesta;
+        }
+
+        return respuesta;
+    }
+
     public Respuesta cambiarNombre(long celular, String nombre, String apellido) {
         respuesta = new Respuesta();
         try {
@@ -109,7 +152,7 @@ public class ConexionDB {
         }
         return respuesta;
     }
-
+//jj
     public Respuesta enviarMsgGrupo(long transmisor, long idGrupo, String msg) {
         respuesta = new Respuesta();
         try {
@@ -415,4 +458,5 @@ public class ConexionDB {
             return respuesta;
         }
     }
+
 }
