@@ -91,12 +91,14 @@ public class BuscarPeticiones extends Thread {
                             System.out.println("-> Se ha detectado un mensaje");
                             Gson gsonMsg = new Gson();
                             String respuestaMsgJson;
-
-                            Socket socketMsg = new Socket(lista.getCompitas().get(comunicacion.datos.get(1)).getIp(), 1234);
+                            String ip=lista.getPersonas().get(Long.parseLong(comunicacion.datos.get(1))).getIp();
+                            ip=ip.substring(1);
+                            ip=ip.substring(0,ip.length()-5);
+                            System.out.println(ip);
+                            Socket socketMsg = new Socket(ip, 1234);
                             BufferedReader brMsg = new BufferedReader(new InputStreamReader(socketMsg.getInputStream()));
                             BufferedWriter bwMsg = new BufferedWriter(new OutputStreamWriter(socketMsg.getOutputStream()));
                             Vector<String> vectorMsg = new Vector<>(2, 2);
-
                             vectorMsg.addElement(comunicacion.datos.get(0));//quien envia el msg
                             vectorMsg.addElement(comunicacion.datos.get(2));//msj a enviar
                             bwMsg.write(gsonMsg.toJson(new Comunicacion("msg", vectorMsg)) + "\n");
@@ -107,7 +109,7 @@ public class BuscarPeticiones extends Thread {
                             bwMsg.close();
                             gsonMsg = new Gson();
                             Respuesta respuestaMsg = gsonMsg.fromJson(respuestaMsgJson, Respuesta.class);
-                            if (respuestaMsg.success()==true){
+                            if (respuestaMsg.success()){
                                 System.out.println("-> Se ha enviado el Msg correctamente! (:");
                                 responder.setSuccess(true);
                             }else{
