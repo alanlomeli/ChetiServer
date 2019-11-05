@@ -29,6 +29,7 @@ public class BuscarPeticiones extends Thread {
     private ConexionDB db;
     private Respuesta responder;
     private HashMap<Long, Usuarios> usuarios;
+    private ListaUsuarios lista;
 
     @Override
     public void run() {
@@ -87,10 +88,12 @@ public class BuscarPeticiones extends Thread {
                             System.out.println("-> Se ha detectado un mensaje");
                             Gson gsonMsg = new Gson();
                             String respuestaMsgJson;
-                            Socket socketMsg = new Socket(comunicacion.datos.get(1), 1234);
+
+                            Socket socketMsg = new Socket(lista.getCompitas().get(comunicacion.datos.get(1)).getIp(), 1234);
                             BufferedReader brMsg = new BufferedReader(new InputStreamReader(socketMsg.getInputStream()));
                             BufferedWriter bwMsg = new BufferedWriter(new OutputStreamWriter(socketMsg.getOutputStream()));
                             Vector<String> vectorMsg = new Vector<>(2, 2);
+
                             vectorMsg.addElement(comunicacion.datos.get(0));//quien envia el msg
                             vectorMsg.addElement(comunicacion.datos.get(2));//msj a enviar
                             bwMsg.write(gsonMsg.toJson(new Comunicacion("msg", vectorMsg)) + "\n");
@@ -105,7 +108,7 @@ public class BuscarPeticiones extends Thread {
                                 System.out.println("-> Se ha enviado el Msg correctamente! (:");
                                 responder.setSuccess(true);
                             }else{
-                                System.out.println("-> No se envío el msg MAldito Incompetente!! >:v");
+                                System.out.println("-> No se envío el msg Maldito Incompetente!! >:v");
                                 responder.setSuccess(false);
                             }
                         }catch (Exception ex){
@@ -135,7 +138,7 @@ public class BuscarPeticiones extends Thread {
                             }
                         }
                         listaGrupoHash= db.generarListaGrupos(comunicacion.datos.get(0));
-                        ListaUsuarios lista = new ListaUsuarios(listaCompitasHash,listaUsuariosHash,listaGrupoHash);
+                        lista = new ListaUsuarios(listaCompitasHash,listaUsuariosHash,listaGrupoHash);
                         Vector <String> datos= new Vector<>();
                         datos.add(gson.toJson(lista));
                         responder= new Respuesta();

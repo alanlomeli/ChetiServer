@@ -110,17 +110,6 @@ public class ConexionDB {
         return respuesta;
     }
 
-    public Respuesta enviarMsgUsuario(long transmisor, long receptor, String msg) {
-        respuesta = new Respuesta();
-        try {
-
-        } catch (Exception ex) {
-            System.out.println(" -> " + ex);
-            return respuesta;
-        }
-        return respuesta;
-    }
-
     public Respuesta enviarMsgGrupo(long transmisor, long idGrupo, String msg) {
         respuesta = new Respuesta();
         try {
