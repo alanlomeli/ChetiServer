@@ -152,7 +152,7 @@ public class ConexionDB {
         }
         return respuesta;
     }
-
+//jj
     public Respuesta enviarMsgGrupo(long transmisor, long idGrupo, String msg) {
         respuesta = new Respuesta();
         try {
