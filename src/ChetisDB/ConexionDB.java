@@ -40,7 +40,7 @@ public class ConexionDB {
 
         try {
             ResultSet rs;
-            PreparedStatement sql = con.prepareStatement("select * from Usuario");
+            PreparedStatement sql = con.prepareStatement("select * from Usuario;");
 
             rs = sql.executeQuery();
 
@@ -390,4 +390,29 @@ public class ConexionDB {
         return grupos;
     }
 
+    public Respuesta solicitudCompita(String celUsuario, String celNuevoCompi, String apodoCompi) {
+        respuesta = new Respuesta();
+        try {
+            ResultSet res;
+            PreparedStatement sql = con.prepareStatement("insert into Amistad (Persona_FK, Amigo_FK, Apodo) values( ? , ? , ? );");
+
+            sql.setString(1, celUsuario);
+            sql.setString(2, celNuevoCompi);
+            sql.setString(3, apodoCompi);
+            sql.executeUpdate();
+
+
+            Vector<String> datos = new Vector<>();
+            datos.add(celNuevoCompi);
+            datos.add(apodoCompi);
+            respuesta.setDatos(datos);
+            respuesta.setSuccess(true);
+            return respuesta;
+
+        } catch (SQLException ex) {
+            System.out.println(" -> " + ex);
+            respuesta.setSuccess(false);
+            return respuesta;
+        }
+    }
 }
