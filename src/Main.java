@@ -42,8 +42,11 @@ public class Main {
        }
 
         Thread h1;
-        h1 = new BuscarPeticiones(usuarios);
+        h1 = new BuscarPeticiones(1,usuarios);
         h1.start();
+       /* Thread h2;
+        h2 = new BuscarPeticiones(2,usuarios);
+        h2.start(); */
         System.out.println("-> Threads iniciados");
 
 

@@ -267,6 +267,46 @@ public class ConexionDB {
         }
         return respuesta;
     }
+    public Respuesta actualizarGrupo(Vector<String> datos) {
+        String[] parts = datos.get(0).split(",");
+        int pk_grupo = Integer.parseInt(parts[0]);
+        String nombre_grupo = parts[1];
+
+        respuesta = new Respuesta();
+        try {
+            PreparedStatement sql = con.prepareStatement("UPDATE Grupo set Nombre=? where Grupo_ID=?");
+            sql.setString(1, nombre_grupo);
+            sql.setInt(2, pk_grupo);
+            sql.executeUpdate();
+
+            enviarSolicitudesGrupo(datos, pk_grupo);
+            respuesta.setSuccess(true);
+        } catch (SQLException ex) {
+            System.out.println(" -> " + ex);
+            return respuesta;
+
+        }
+        return respuesta;
+    }
+    public Respuesta salirGrupo(Vector<String> datos) {
+        int pk_grupo = Integer.parseInt(datos.get(0));
+        long celular = Long.parseLong(datos.get(1));
+        respuesta = new Respuesta();
+
+        try {
+            PreparedStatement sql = con.prepareStatement("DELETE FROM Integrantes_Grupo WHERE Grupo_FK=?&&Usuario_FK=?");
+            sql.setInt(1, pk_grupo);
+            sql.setLong(2, celular);
+            sql.executeUpdate();
+
+            respuesta.setSuccess(true);
+        } catch (SQLException ex) {
+            System.out.println(" -> " + ex);
+            return respuesta;
+
+        }
+        return respuesta;
+    }
 
     private void enviarSolicitudesGrupo(Vector<String> datos, int id_insertado) {
 
@@ -281,8 +321,6 @@ public class ConexionDB {
                 sql.executeUpdate();
 
             }
-            Vector<String> datoss = new Vector<>();
-            datoss.add("777");
             respuesta.setSuccess(true);
 
         } catch (SQLException ex) {

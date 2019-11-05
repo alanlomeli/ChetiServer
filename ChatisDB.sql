@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 04, 2019 at 04:23 AM
+-- Generation Time: Nov 05, 2019 at 05:36 AM
 -- Server version: 10.4.6-MariaDB-log
 -- PHP Version: 7.3.9
 
@@ -55,6 +55,14 @@ CREATE TABLE `Grupo` (
   `Creador_FK` bigint(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `Grupo`
+--
+
+INSERT INTO `Grupo` (`Grupo_ID`, `Nombre`, `Creador_FK`) VALUES
+(24, 'saca la lana', 666),
+(25, 'killme', 666);
+
 -- --------------------------------------------------------
 
 --
@@ -66,6 +74,14 @@ CREATE TABLE `Integrantes_Grupo` (
   `Grupo_FK` int(255) DEFAULT NULL,
   `Usuario_FK` bigint(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Triggers `Integrantes_Grupo`
+--
+DELIMITER $$
+CREATE TRIGGER `borrarGrupo` AFTER DELETE ON `Integrantes_Grupo` FOR EACH ROW DELETE from Grupo where (Select Count(*) FROM Integrantes_Grupo WHERE Grupo_FK=old.Grupo_FK)=1 || (Select Count(*) FROM Integrantes_Grupo WHERE Grupo_FK=old.Grupo_FK)=0	&&Grupo_ID=old.Grupo_FK
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -92,6 +108,14 @@ CREATE TABLE `Solicitudes_Grupo` (
   `Usuario_FK` bigint(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `Solicitudes_Grupo`
+--
+
+INSERT INTO `Solicitudes_Grupo` (`Solicitudes_Grupo_ID`, `Grupo_FK`, `Usuario_FK`) VALUES
+(25, 24, 777),
+(26, 25, 777);
+
 -- --------------------------------------------------------
 
 --
@@ -111,12 +135,13 @@ CREATE TABLE `Usuario` (
 --
 
 INSERT INTO `Usuario` (`Celular`, `Nombre`, `Apellido`, `Respuesta`, `Passwd`) VALUES
+(333, 'HOla', 'como', 'caca', 0x4b89bf6ac9b41b866455acebfb89964f),
 (666, 'Alans', 'Lomelangass', 'Caquita', 0x8803c0645a48912427f322a17174cf4c),
-(777, 'RIchie', 'caca', 'caca', 0x8803c0645a48912427f322a17174cf4c),
+(777, 'RIc', 'caca', 'caca', 0x8803c0645a48912427f322a17174cf4c),
 (3323, 'cacas', 'cacs', 'yeah', 0x8803c0645a48912427f322a17174cf4c),
-(3336266817, 'Alan Jesus', 'Lomeli Garcia', 'Guadalajara', 0x8803c0645a48912427f322a17174cf4c),
+(3336266817, 'Alan J', 'Lomeli Garcia', 'Guadalajara', 0x8803c0645a48912427f322a17174cf4c),
 (3336266818, 'Alancin', 'Dos', 'GDL', 0x8803c0645a48912427f322a17174cf4c),
-(3336266819, 'Doug Dimmadome', 'DUeño del Dommodim', 'Dimmsdale', 0x8803c0645a48912427f322a17174cf4c),
+(3336266819, 'Doug Dimm', 'DUeño del Dommodim', 'Dimmsdale', 0x8803c0645a48912427f322a17174cf4c),
 (3336266917, 'Lizzie ', 'Grant', 'New York', 0x8803c0645a48912427f322a17174cf4c);
 
 --
@@ -182,13 +207,13 @@ ALTER TABLE `Amistad`
 -- AUTO_INCREMENT for table `Grupo`
 --
 ALTER TABLE `Grupo`
-  MODIFY `Grupo_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `Grupo_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `Integrantes_Grupo`
 --
 ALTER TABLE `Integrantes_Grupo`
-  MODIFY `Integrantes_Grupo_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `Integrantes_Grupo_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `Mensajes_Pendientes`
@@ -200,7 +225,7 @@ ALTER TABLE `Mensajes_Pendientes`
 -- AUTO_INCREMENT for table `Solicitudes_Grupo`
 --
 ALTER TABLE `Solicitudes_Grupo`
-  MODIFY `Solicitudes_Grupo_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `Solicitudes_Grupo_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- Constraints for dumped tables

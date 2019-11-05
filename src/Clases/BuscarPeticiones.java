@@ -29,6 +29,7 @@ public class BuscarPeticiones extends Thread {
     private ConexionDB db;
     private Respuesta responder;
     private HashMap<Long, Usuarios> usuarios;
+    private int IDThread;
     private ListaUsuarios lista;
 
     @Override
@@ -53,7 +54,6 @@ public class BuscarPeticiones extends Thread {
                         responder = db.iniciarSesion(Long.parseLong(comunicacion.datos.get(0)), comunicacion.datos.get(1));
                         if (responder.success) {
 
-
                             usuarios.get(Long.parseLong(comunicacion.datos.get(0))).setOnline(true);
                             usuarios.get(Long.parseLong(comunicacion.datos.get(0))).setIp(c.getRemoteSocketAddress().toString());
 
@@ -70,6 +70,9 @@ public class BuscarPeticiones extends Thread {
                     case "cambiarNombre":
                         responder = db.cambiarNombre(Long.parseLong(comunicacion.datos.get(0)), comunicacion.datos.get(1), comunicacion.datos.get(2));
                         System.out.print("-> Cambio de nombre detectado de ");
+                        if(responder.success()){
+                            usuarios.get(Long.parseLong(comunicacion.datos.get(0))).setNombre(comunicacion.datos.get(1));
+                        }
                         break;
 
                     case "registro":
@@ -156,18 +159,24 @@ public class BuscarPeticiones extends Thread {
                         responder = db.crearGrupo(comunicacion.datos);
                         System.out.print("-> Se ha detectado creacion de grupo  ");
                         break;
-
-
+                    case "actualizarGrupo":
+                        responder = db.actualizarGrupo(comunicacion.datos);
+                        System.out.print("-> Se ha detectado un cambio en un grupo ");
+                        break;
+                    case "salirGrupo":
+                        responder = db.salirGrupo(comunicacion.datos);
+                        System.out.print("-> Se ha detectado una salida en un grupo ");
+                        break;
                 }
                 System.out.print(c.getRemoteSocketAddress().toString());
-                System.out.println(" respuesta: " + gson.toJson(responder));
+                System.out.println(" respuesta: " + gson.toJson(responder)+" Thread:"+IDThread);
                 bw.write(gson.toJson(responder));  //Le responde al cliente
                 bw.newLine();
                 bw.flush();
                 bw.close();
                 br.close();
             } catch (SocketException e) {
-                System.out.println("-> Excepcion de tipo " + e);
+                System.out.println("-> Excepcion de tipo " + e+" Thread:"+IDThread);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -177,8 +186,9 @@ public class BuscarPeticiones extends Thread {
 
     }
 
-    public BuscarPeticiones(HashMap<Long, Usuarios> usuarios) {
+    public BuscarPeticiones(int id,HashMap<Long, Usuarios> usuarios) {
         this.usuarios = usuarios;
+        IDThread=id;
         db = new ConexionDB();
         try {
             socket = new ServerSocket(1234);
