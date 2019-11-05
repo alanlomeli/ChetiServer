@@ -175,6 +175,12 @@ public class BuscarPeticiones extends Thread {
                         responder = db.salirGrupo(comunicacion.datos);
                         System.out.print("-> Se ha detectado una salida en un grupo ");
                         break;
+
+                    case "solicitudCompita":
+                        responder = db.solicitudCompita(comunicacion.datos.get(0), comunicacion.datos.get(1), comunicacion.datos.get(2));
+                        System.out.print("-> Solicitud compita de ");
+                        break;
+
                 }
                 System.out.print(c.getRemoteSocketAddress().toString());
                 System.out.println(" respuesta: " + gson.toJson(responder)+" Thread:"+IDThread);
