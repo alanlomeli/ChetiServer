@@ -118,6 +118,12 @@ public class BuscarPeticiones extends Thread {
                             System.out.println(ex);
                         }
                         break;
+
+                    case "MsgGrupo":
+                        //pedir un vector de objetos de usuarios de consulta
+
+                        break;
+
                     case "verUsuarios":
 
                         Vector<String> listaCompitas;
