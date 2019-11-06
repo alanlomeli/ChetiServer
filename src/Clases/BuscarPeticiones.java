@@ -98,7 +98,7 @@ public class BuscarPeticiones extends Thread {
                             System.out.println("-> Se ha detectado un mensaje");
                             Gson gsonMsg = new Gson();
                             String respuestaMsgJson;
-                            String ip=lista.getPersonas().get(Long.parseLong(comunicacion.datos.get(1))).getIp();
+                            String ip=usuarios.get(Long.parseLong(comunicacion.datos.get(1))).getIp();
                             ip=ip.substring(1);
                             String[] recorte;
                             recorte = ip.split(":");
@@ -203,7 +203,7 @@ public class BuscarPeticiones extends Thread {
                 bw.newLine();
                 bw.flush();
                 bw.close();
-                br.close();
+
             } catch (SocketException e) {
                 System.out.println("-> Excepcion de tipo " + e+" Thread:"+IDThread);
 

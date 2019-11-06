@@ -39,7 +39,7 @@ public class ConexionDB {
 
         try {
             ResultSet rs;
-            PreparedStatement sql = con.prepareStatement("select * from Usuario;");
+                        PreparedStatement sql = con.prepareStatement("select * from Usuario;");
 
             rs = sql.executeQuery();
 
