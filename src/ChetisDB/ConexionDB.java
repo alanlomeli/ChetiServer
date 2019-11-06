@@ -284,8 +284,6 @@ public class ConexionDB {
             sql.setString(1, nombre_grupo);
             sql.executeUpdate();
 
-
-
             ResultSet rs;
             consulta = "SELECT LAST_INSERT_ID() as ID";
             sql = con.prepareStatement(consulta);
