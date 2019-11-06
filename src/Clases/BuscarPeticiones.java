@@ -196,6 +196,11 @@ public class BuscarPeticiones extends Thread {
                         System.out.print("-> Solicitud compita de ");
                         break;
 
+                    case "borrarCompita":
+                        responder = db.borrarCompita(comunicacion.datos.get(0), comunicacion.datos.get(1));
+                        System.out.print("-> Solicitud compita de ");
+                        break;
+
                 }
                 System.out.print(c.getRemoteSocketAddress().toString());
                 System.out.println(" respuesta: " + gson.toJson(responder)+" Thread:"+IDThread);
@@ -222,6 +227,7 @@ public class BuscarPeticiones extends Thread {
         try {
             socket = new ServerSocket(1234);
         } catch (Exception ex) {
+            System.out.println(ex);
         }
     }
 }

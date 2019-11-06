@@ -459,4 +459,27 @@ public class ConexionDB {
         }
     }
 
+    public Respuesta borrarCompita(String celUsuario, String celCompi) {
+        respuesta = new Respuesta();
+        try {
+            ResultSet res;
+            PreparedStatement sql = con.prepareStatement("DELETE FROM amistad WHERE amistad.Persona_FK = ? AND amistad.Amigo_FK = ?;");
+
+            sql.setString(1, celUsuario);
+            sql.setString(2, celCompi);
+            sql.executeUpdate();
+
+            Vector<String> datos = new Vector<>();
+            datos.add(celCompi);
+            respuesta.setDatos(datos);
+            respuesta.setSuccess(true);
+            return respuesta;
+
+        } catch (SQLException ex) {
+            System.out.println(" -> " + ex);
+            respuesta.setSuccess(false);
+            return respuesta;
+        }
+    }
+
 }
